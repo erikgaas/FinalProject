@@ -9,15 +9,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
 import com.udacity.gradle.builditbigger.R;
 import com.udacity.gradle.builditbigger.JokeAsyncTask;
 
 
 public class MainActivity extends ActionBarActivity {
-    InterstitialAd mInterstitialAd;
     private ProgressBar spinner;
 
     @Override
@@ -25,21 +21,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         spinner = (ProgressBar)findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
-
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                spinner.setVisibility(View.VISIBLE);
-                requestNewInterstitial();
-                new JokeAsyncTask(getApplicationContext()).execute();
-            }
-        });
-
-        requestNewInterstitial();
     }
 
     @Override
@@ -72,23 +55,11 @@ public class MainActivity extends ActionBarActivity {
 
 
     public void tellJoke(View view){
-        if (mInterstitialAd.isLoaded() && BuildConfig.FLAVOR.equals("free")){
-            mInterstitialAd.show();
-        } else {
-            spinner.setVisibility(View.VISIBLE);
-            new JokeAsyncTask(getApplicationContext()).execute();
-        }
+        spinner.setVisibility(View.VISIBLE);
+        new JokeAsyncTask(getApplicationContext()).execute();
 
     }
 
-    private void requestNewInterstitial() {
-        if (BuildConfig.FLAVOR.equals("free")) {
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice("DCA58F894EC2F3D6EDDDE38F0462C7AC")
-                    .build();
-            mInterstitialAd.loadAd(adRequest);
-        }
-    }
 
 
 }
